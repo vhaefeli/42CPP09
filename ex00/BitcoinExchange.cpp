@@ -6,7 +6,7 @@
 /*   By: vhaefeli <vhaefeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 19:57:21 by vhaefeli          #+#    #+#             */
-/*   Updated: 2023/06/23 11:43:30 by vhaefeli         ###   ########.fr       */
+/*   Updated: 2023/06/23 12:20:50 by vhaefeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ BitcoinExchange::BitcoinExchange()
 				else
 				{
 					std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-					bcExchangeRate.insert(std::pair<double, double>(0, 0));
+					_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 					break;
 				}
 				str = line.substr(5, 6);
@@ -60,7 +60,7 @@ BitcoinExchange::BitcoinExchange()
 				else
 				{
 					std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-					bcExchangeRate.insert(std::pair<double, double>(0, 0));
+					_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 					break;
 				}
 				str = line.substr(8, 9);
@@ -73,14 +73,14 @@ BitcoinExchange::BitcoinExchange()
 						if (num >= 29 && (num > 28 && ((date.tm_year + 1900) % 4) != 0))
 						{
 							std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-							bcExchangeRate.insert(std::pair<double, double>(0, 0));
+							_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 							break;
 						}
 					}
 					else if (num == 31 && ((date.tm_mon == 3 || date.tm_mon == 5 || date.tm_mon == 8 || date.tm_mon == 10)))
 					{
 						std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-						bcExchangeRate.insert(std::pair<double, double>(0, 0));
+						_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 						break;
 					}
 					else
@@ -89,7 +89,7 @@ BitcoinExchange::BitcoinExchange()
 				else
 				{
 					std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-					bcExchangeRate.insert(std::pair<double, double>(0, 0));
+					_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 					break;
 				}
 				decimalDate = convertDateToDecimal(date);
@@ -105,11 +105,11 @@ BitcoinExchange::BitcoinExchange()
 				else
 				{
 					std::cout << YEL << "Error : data.cvs bad input => " << line << NOC << std::endl;
-					bcExchangeRate.insert(std::pair<double, double>(0, 0));
+					_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 					break;
 				}
 				// std::cout << BLU << "rate " << rate << NOC << std::endl;
-				bcExchangeRate.insert(std::pair<double, double>(decimalDate, rate));
+				_bcExchangeRate.insert(std::pair<double, double>(decimalDate, rate));
 			}
 		}
 		file.close();
@@ -117,8 +117,22 @@ BitcoinExchange::BitcoinExchange()
 	else
 	{
 		std::cout << RED << "Error: cannot open file data.csv with bitcoin Exchage rates" << NOC << std::endl;
-		bcExchangeRate.insert(std::pair<double, double>(0, 0));
+		_bcExchangeRate.insert(std::pair<double, double>(0, 0));
 	}
+}
+
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &src)
+{
+	*this = src;
+}
+
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &rhs)
+{
+	if (this != &rhs)
+	{
+		this->_bcExchangeRate = rhs._bcExchangeRate;
+	}
+	return (*this);
 }
 
 BitcoinExchange::~BitcoinExchange()
@@ -130,8 +144,8 @@ double BitcoinExchange::getExchangeRate(std::string strdate)
 	std::map<double, double>::iterator it;
 	if (strdate == "0")
 	{
-		it = this->bcExchangeRate.find(0);
-		if (it == bcExchangeRate.end())
+		it = this->_bcExchangeRate.find(0);
+		if (it == _bcExchangeRate.end())
 		{
 			return (1);
 		}
@@ -188,22 +202,22 @@ double BitcoinExchange::getExchangeRate(std::string strdate)
 	decimalDate = convertDateToDecimal(date);
 	// std::cout << YEL << "decimal date" << decimalDate << NOC << std::endl;
 
-	it = this->bcExchangeRate.find(decimalDate);
-	if (it == bcExchangeRate.end())
+	it = this->_bcExchangeRate.find(decimalDate);
+	if (it == _bcExchangeRate.end())
 	{
 		int i = 0;
-		while (it == bcExchangeRate.end() && i < 30)
+		while (it == _bcExchangeRate.end() && i < 30)
 		{
 			decimalDate--;
 			i++;
-			it = this->bcExchangeRate.find(decimalDate);
+			it = this->_bcExchangeRate.find(decimalDate);
 		}
 		// std::cout << YEL << "nearest decimal date" << decimalDate << NOC << std::endl;
 	}
-	if (it == bcExchangeRate.end())
+	if (it == _bcExchangeRate.end())
 	{
-		bcExchangeRate.erase(it);
+		_bcExchangeRate.erase(it);
 		return (-1);
 	}
-	return (bcExchangeRate.find(decimalDate)->second);
+	return (_bcExchangeRate.find(decimalDate)->second);
 }
