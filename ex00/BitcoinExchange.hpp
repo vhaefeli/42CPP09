@@ -6,7 +6,7 @@
 /*   By: vhaefeli <vhaefeli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 08:26:29 by vhaefeli          #+#    #+#             */
-/*   Updated: 2023/06/23 12:17:53 by vhaefeli         ###   ########.fr       */
+/*   Updated: 2023/06/23 18:40:56 by vhaefeli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class BitcoinExchange
 {
 private:
 	std::map<double, double> _bcExchangeRate;
-	BitcoinExchange(const BitcoinExchange &other);
-	BitcoinExchange &operator=(const BitcoinExchange &other);
+	BitcoinExchange(const BitcoinExchange &src);
+	BitcoinExchange &operator=(const BitcoinExchange &rhs);
 
 public:
 	BitcoinExchange();

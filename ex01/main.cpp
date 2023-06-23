@@ -4,7 +4,7 @@ int main(int argc, char **argv)
 {
 	if (argc != 2)
 	{
-		std::cout << RED << "Error: missing arguments for calculation" << NOC << std::endl;
+		std::cout << RED << "Error: wrong arguments for calculation" << NOC << std::endl;
 		return (1);
 	}
 	try
